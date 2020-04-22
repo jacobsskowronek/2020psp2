@@ -31,6 +31,31 @@ aa83988848 薗田光太郎
 一方，母集団の平均の推定値は，標本の平均<img src="/k01/tex/33717a96ef162d4ca3780ca7d161f7ad.svg?invert_in_darkmode&sanitize=true" align=middle width=9.39498779999999pt height=18.666631500000015pt/>が最良である．
 
 ## ソースコードの説明
+In the start of the main function, we set up variables to help us to read values from a value, as well as calculate the moving average and standard deviation for N-1 iteratively.
+`val` is used to store the values as they are read from the file that the user inputs
+`fname` is a char array that stores the filename that the user inputs, with a max size of `[FILENAME_MAX]`
+`buf` is a char array used as a buffer for the amount of data to read from the file, and has a size of 256
+`fp` is the pointer to the file itself
 
+`moving_average` is used to store the average up to N-1 and has an initial value of 0
+`moving_std_dev` is used to store the standard deviation up to N-1 and has an initial value of 0
+
+We then proceed to ask the user for the filename of the file to be read from.
+`fgets` reads from stdin (standard input from console) and stores it into the char array pointed to by fname
+The next line inserts a null terminator to the last index of fname to indicate the end of the string. We then proceed to read out the filename back to the user.
+We can then read the file with read permissions using `fopen(fname,"r")` and store it into `fp`. We check to see if it is null as this indicates there was an error opening the file.
+
+We now enter the while loop where we calculate the average and standard deviation. The loop will continue until there are no more lines to read from the file. We read each line using `fgets` and store it in our buffer `buf`.
+`sscanf` is used to read the buffer and store the value as a double into `val`
+`count` is a global variable used as our N, and we increment it by one before calculating average and standard deviation
+We then proceed to call our functions to calculate average and standard deviation, and store the return values in `moving_average` and `moving_std_dev` respectively.
+`ave_online` calculates the new average, and takes the current value read as a double from the file and the previous average (N-1) as a double as parameters
+`var_online` calculates the standard deviation, and takes the current value, the new average calculated previously by `ave_online`, and the new average to the power of 2, all as doubles.
+We proceed to print the calculated values after each function.
+
+Looking in the function `ave_online`, we calculate the new average using the formula given above, which requires N, the previous average (average for N-1), and the new input value. This is stored in `newAverage` which we return.
+`var_online` calcualtes the new standard deviation by splitting the formula shown above into two separate parts and combining them in `std_dev`. This is our final return value.
+
+Once the file is read to the end, we can then proceed to close it using `fclose`, and handle for errors by checking it for `EOF`, which is the end of the file. If there is an error, we print in `stderr` for the user to see in the console, and exits with code `EXIT_FAILURE`.
 ## 修正履歴
 
